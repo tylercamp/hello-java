@@ -21,11 +21,18 @@ jobs:
     - name: Environment
       run: |
         env | sort
+
+    - name: Black Duck Scan without action
+      run: |
+        curl -fLOsS https://detect.synopsys.com/detect.sh && chmod +x detect.sh
+        ./detect.sh --detect.project.name=chuckaude-$PROJECT --detect.project.version.name=$BRANCH --detect.tools=SIGNATURE_SCAN,DETECTOR
+
     - name: Black Duck Scan with token
       uses: blackducksoftware/github-action@v2
       with:
         args: --blackduck.url=${{secrets.BLACKDUCK_URL}} --blackduck.api.token=${{secrets.BLACKDUCK_API_TOKEN}} --detect.tools=SIGNATURE_SCAN,DETECTOR
           --detect.project.name=$PROJECT --detect.project.version.name=$BRANCH
+
     - name: Black Duck Scan without token
       uses: blackducksoftware/github-action@v2
       with:
