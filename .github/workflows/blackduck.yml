@@ -18,7 +18,16 @@ jobs:
     - uses: actions/setup-java@v1
       with:
         java-version: 8
-    - name: Black Duck Scan
+    - name: Environment
+      run: |
+        env | sort
+    - name: Black Duck Scan with token
       uses: blackducksoftware/github-action@v2
       with:
-         args: --detect.project.name=$PROJECT --detect.project.version.name=$BRANCH --detect.tools=SIGNATURE_SCAN,DETECTOR
+        args: --blackduck.url=${{secrets.BD_HUB_URL}} --blackduck.api.token=${{secrets.BD_HUB_TOKEN}} --detect.tools=SIGNATURE_SCAN,DETECTOR
+          --detect.project.name=$PROJECT --detect.project.version.name=$BRANCH
+    - name: Black Duck Scan without token
+      uses: blackducksoftware/github-action@v2
+      with:
+        args: --blackduck.url=${{secrets.BD_HUB_URL}} --detect.tools=SIGNATURE_SCAN,DETECTOR
+          --detect.project.name=$PROJECT --detect.project.version.name=$BRANCH
