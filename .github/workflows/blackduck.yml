@@ -24,10 +24,10 @@ jobs:
     - name: Black Duck Scan with token
       uses: blackducksoftware/github-action@v2
       with:
-        args: --blackduck.url=${{secrets.BD_HUB_URL}} --blackduck.api.token=${{secrets.BD_HUB_TOKEN}} --detect.tools=SIGNATURE_SCAN,DETECTOR
+        args: --blackduck.url=${{secrets.BLACKDUCK_URL}} --blackduck.api.token=${{secrets.BLACKDUCK_API_TOKEN}} --detect.tools=SIGNATURE_SCAN,DETECTOR
           --detect.project.name=$PROJECT --detect.project.version.name=$BRANCH
     - name: Black Duck Scan without token
       uses: blackducksoftware/github-action@v2
       with:
-        args: --blackduck.url=${{secrets.BD_HUB_URL}} --detect.tools=SIGNATURE_SCAN,DETECTOR
+        args: --blackduck.url=${{secrets.BLACKDUCK_URL}} --detect.tools=SIGNATURE_SCAN,DETECTOR
           --detect.project.name=$PROJECT --detect.project.version.name=$BRANCH
