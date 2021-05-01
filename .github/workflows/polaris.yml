@@ -1,4 +1,5 @@
-name: Polaris public runner
+name: Polaris
+
 on:
   push:
     branches: [ master ]
@@ -6,13 +7,12 @@ on:
 
 jobs:
   polaris:
-
     runs-on: ubuntu-latest
 
     env:
-      POLARIS_SERVER_URL:  ${{ secrets.POLARIS_SERVER_URL }}
-      POLARIS_ACCESS_TOKEN:  ${{ secrets.POLARIS_ACCESS_TOKEN }}
-      PROJECT: hello-java
+      POLARIS_SERVER_URL: ${{ secrets.POLARIS_SERVER_URL }}
+      POLARIS_ACCESS_TOKEN: ${{ secrets.POLARIS_ACCESS_TOKEN }}
+      PROJECT: chuckaude-hello-java
       BLDCMD: mvn -B package -DskipTests
 
     steps:
