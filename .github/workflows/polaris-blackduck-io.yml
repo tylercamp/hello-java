@@ -10,8 +10,10 @@ jobs:
     runs-on: self-hosted
 
     env:
-      POLARIS_SERVER_URL:  ${{ secrets.POLARIS_SERVER_URL }}
-      POLARIS_ACCESS_TOKEN:  ${{ secrets.POLARIS_ACCESS_TOKEN }}
+      POLARIS_SERVER_URL: ${{ secrets.POLARIS_SERVER_URL }}
+      POLARIS_ACCESS_TOKEN: ${{ secrets.POLARIS_ACCESS_TOKEN }}
+      BLACKDUCK_URL: ${{ secrets.BLACKDUCK_URL }}
+      BLACKDUCK_API_TOKEN: ${{ secrets.BLACKDUCK_API_TOKEN }}
       PROJECT: chuckaude-hello-java
       #BRANCH: ${GITHUB_REF##*/}
       BRANCH: master
@@ -47,8 +49,7 @@ jobs:
       if: ${{steps.prescription.outputs.scaScan == 'true' }}
       uses: blackducksoftware/github-action@v2
       with:
-         args: --blackduck.url=${{secrets.BLACKDUCK_URL}} --blackduck.api.token=${{secrets.BLACKDUCK_API_TOKEN}} --detect.tools=SIGNATURE_SCAN,DETECTOR
-            --detect.project.name=$PROJECT --detect.project.version.name=$BRANCH
+        args: --detect.project.name=$PROJECT --detect.project.version.name=$BRANCH --detect.tools=SIGNATURE_SCAN,DETECTOR
 
     - name: Synopsys Intelligent Security Scan
       if: ${{ steps.prescription.outputs.sastScan == 'true' || steps.prescription.outputs.scaScan == 'true' }}
