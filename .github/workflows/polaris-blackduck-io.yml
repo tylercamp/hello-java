@@ -35,7 +35,7 @@ jobs:
         workflowServerUrl: ${{secrets.WORKFLOW_SERVER_URL}}
         additionalWorkflowArgs: --persona=developer --release.type=minor --sast.rescan.threshold=10  --sca.rescan.threshold=10 --file.change.threshold=20
                   --polaris.url=${{secrets.POLARIS_SERVER_URL}} --polaris.token=${{secrets.POLARIS_ACCESS_TOKEN}}
-                  --sensitive.package.pattern='.*(.xml)$'
+                  --sensitive.package.pattern='.*(.txt)$'
         stage: "IO"
 
     - name: Polaris Scan
