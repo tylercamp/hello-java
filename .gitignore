@@ -4,3 +4,5 @@
 .settings
 .svn
 target
+coverity.conf
+workspace.code-workspace
