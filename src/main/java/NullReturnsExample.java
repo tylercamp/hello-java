@@ -9,7 +9,7 @@ public class NullReturnsExample {
     }
     public static void testA() {
         // This demonstrates a very straightforward null-return bug
-        // returnA().toString();
+        returnA().toString();
     }
     public static void testB() {
         // no bug here
