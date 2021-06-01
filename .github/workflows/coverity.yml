@@ -15,7 +15,7 @@ jobs:
       COV_URL: ${{ secrets.COV_URL }}
       COV_USER: ${{ secrets.COV_USER }}
       COVERITY_PASSPHRASE: ${{ secrets.COVERITY_PASSPHRASE }}
-      COVERITY_TOOL_HOME: /opt/coverity/analysis/current
+      COVERITY_TOOL_HOME: /opt/Coverity/cov-analysis
       COVERITY_PROJECT: hello-java
       BLDCMD: mvn -B clean package -DskipTests
       CHECKERS: --webapp-security
