@@ -8,7 +8,7 @@ public class NullReturnsExample {
         return new Object();
     }
     public static void testA() {
-        // This demonstrates a very straightforward null-return bug
+        // This demonstrates a very straightforward null-return bug because we are passing null in.
         returnA().toString();
     }
     public static void testB() {
