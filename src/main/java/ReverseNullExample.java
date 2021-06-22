@@ -8,8 +8,7 @@ public class ReverseNullExample {
 
     public static String testA(Object o) {
         // callB dereferences o, making the later check a bug
-        // if this were callA, no bug would be reported here. THis is my change!
-        System.out.println(callA(o));
+        System.out.println(callB(o));
         if( o == null ) {
             System.out.println("It's null");
         }
