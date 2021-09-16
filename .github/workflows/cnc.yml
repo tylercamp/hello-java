@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  polaris:
+  coverity:
     runs-on: ubuntu-latest
 
     env:
@@ -23,7 +23,7 @@ jobs:
         
     - name: Coverity Download
       run: |
-        curl -fLsS --user $COV_USER:$COVERITY_PASSPHRASE https://coverity.chuckaude.com:8443/downloadFile.htm?fn=cov-thin-client-linux64-2021.9.0.tar.gz | tar -C /tmp -xzf -
+        curl -fLsS --user $COV_USER:$COVERITY_PASSPHRASE https://coverity-azure.chuckaude.com:8443/downloadFile.htm?fn=cov-thin-client-linux64-2021.9.0.tar.gz | tar -C /tmp -xzf -
         
     - name: Coverity Full Scan
       if: ${{ github.event_name != 'pull_request' }}
