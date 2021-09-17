@@ -13,8 +13,8 @@ jobs:
       COV_URL: ${{ secrets.COV_URL }}
       COV_USER: ${{ secrets.COV_USER }}
       COVERITY_PASSPHRASE: ${{ secrets.COVERITY_PASSPHRASE }}
-      COVERITY_PROJECT: hello-java
       COV_STREAM: hello-java-master
+      REPO: https://coverity-azure.chuckaude.com:8443
 
     steps:
     - uses: actions/checkout@v2
@@ -24,7 +24,7 @@ jobs:
         
     - name: Coverity Download
       run: |
-        curl -fLsS --user $COV_USER:$COVERITY_PASSPHRASE https://coverity-azure.chuckaude.com:8443/downloadFile.htm?fn=cov-thin-client-linux64-2021.9.0.tar.gz | tar -C /tmp -xzf -
+        curl -fLsS --user $COV_USER:$COVERITY_PASSPHRASE $REPO/downloadFile.htm?fn=cov-thin-client-linux64-2021.9.0.tar.gz | tar -C /tmp -xzf -
         
     - name: Coverity Full Scan
       if: ${{ github.event_name != 'pull_request' }}
@@ -33,8 +33,8 @@ jobs:
         export COVERITY_CLI_ANALYSIS_LOCATION=cloud
         set -x
         mkdir -p $HOME/.coverity/authkeys
-        curl -fLsS --user $COV_USER:$COVERITY_PASSPHRASE https://coverity-azure.chuckaude.com:8443/downloadFile.htm?fn=ak-cnc.chuckaude.com-443 | \
+        curl -fLsS --user $COV_USER:$COVERITY_PASSPHRASE $REPO/downloadFile.htm?fn=ak-cnc.chuckaude.com-443 | \
           sed -e "s/COV_USER/$COV_USER/" -e "s/COVERITY_PASSPHRASE/$COVERITY_PASSPHRASE/" > $HOME/.coverity/authkeys/ak-cnc.chuckaude.com-443
-        curl -fLsS --user $COV_USER:$COVERITY_PASSPHRASE https://coverity-azure.chuckaude.com:8443/downloadFile.htm?fn=coverity.conf | \
-          sed "s/COV_STREAM/$COV_STREAM/" > coverity.conf
-        coverity scan
+        curl -fLsS --user $COV_USER:$COVERITY_PASSPHRASE $REPO/downloadFile.htm?fn=coverity.conf | \
+          sed -e "s/COV_STREAM/$COV_STREAM/" > coverity.conf
+        coverity scan -- mvn -B compile
