@@ -24,7 +24,7 @@ jobs:
         
     - name: Coverity Download
       run: |
-        curl -fLsS --user $COV_USER:$COVERITY_PASSPHRASE $REPO/downloadFile.htm?fn=cov-thin-client-linux64-2021.9.0.tar.gz | tar -C /tmp -xzf -
+        curl -fLsS --user $COV_USER:$COVERITY_PASSPHRASE $REPO/downloadFile.htm?fn=cov-thin-client-linux64-2021.9.0.tgz | tar -C /tmp -xzf -
         
     - name: Coverity Full Scan
       if: ${{ github.event_name != 'pull_request' }}
