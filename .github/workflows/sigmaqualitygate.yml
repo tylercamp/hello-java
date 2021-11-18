@@ -1,4 +1,4 @@
-name: CoverityQualityGateDemo
+name: SigmaQualityGateDemo
 on:
   push:
     branches: [ master ]
