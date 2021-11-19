@@ -12,7 +12,7 @@ jobs:
         uses: actions/checkout@v2      
 
       - name: Download SIGMA
-        run: curl -k -L https://poc01.coverity.synopsys.com/coverity-rapid-scan/sigma      
+        run: curl -k -L https://synopsyssf.sharefile.com/d-sf53ad0a8d3ce44c498b97f9d8d82029c      
  
       - name: SIGMA analysis
         run: ./sigma analyze --format github
