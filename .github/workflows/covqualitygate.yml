@@ -1,8 +1,10 @@
 name: CoverityQualityGateDemo
 on:
   push:
-    branches: [ master ]
-  workflow_dispatch:
+    branches: [ master, main ]
+
+  pull_request:
+    branches: [ master, main ]
  
 jobs:
   Coverity:
@@ -18,14 +20,14 @@ jobs:
       COVNODE: /opt/Coverity/cov-analysis/node/bin
       COVHOME: /opt/Coverity/cov-analysis
       BLDCMD: mvn -B clean compile
-      CHECKERS: --webapp-security
+      CHECKERS: --webapp-security --all
  
     steps:
     - uses: AutoModality/action-clean@v1
     - uses: actions/checkout@v2
     - uses: actions/setup-java@v1
       with:
-        java-version: 11
+        java-version: 17
  
     - name: Coverity Full Scan
       run: |
