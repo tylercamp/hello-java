@@ -11,10 +11,14 @@ jobs:
     runs-on: [self-hosted]
 
     env:
-      COVERITY_CHECKERS: --webapp-security
-      COV_URL: ${{ secrets.COVERITY_URL }}
-      COV_USER: ${{ secrets.COVERITY_USER }}
+      COVERITY_CHECKERS: --webapp-security --security --all
+      COV_URL: ${{ secrets.COV_URL }}
+      COV_USER: ${{ secrets.COV_USER }}
       COVERITY_PASSPHRASE: ${{ secrets.COVERITY_PASSPHRASE }}
+      COVBIN: /opt/Coverity/cov-analysis/bin
+      COVNODE: /opt/Coverity/cov-analysis/node/bin
+      COVHOME: /opt/Coverity/cov-analysis
+      BLDCMD: mvn -B clean compile
 
     steps:
       - uses: actions/checkout@v2
