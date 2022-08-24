@@ -1,0 +1,20 @@
+# This is a basic workflow to help you get started with Actions
+
+name: Code-Dx
+
+on: [push]
+
+jobs:
+  codedx-analyze:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Code Dx Upload
+        uses: 'codedx/codedx-github-action@v1.0'
+        with:
+          server-url: ${{ secrets.CDX_SERVER_URL }}
+          api-key: ${{ secrets.CDX_API_KEY }}
+          project-id: ${{ secrets.CDX_PROJECT_ID }}
+          source-and-binaries-glob: './**'
+          wait-for-completion: false
