@@ -41,7 +41,7 @@ jobs:
       if: ${{ github.event_name != 'pull_request' }}
       run: |
         curl -fLsS --user $COV_USER:$COVERITY_PASSPHRASE $COV_URL/api/viewContents/issues/v1/Outstanding%20Issues?projectId=$COVERITY_PROJECT > results.json
-        if [ $(cat results.json | jq .viewContentsV1.totalRows) -ne 0 ]; then cat results.json | jq .viewContentsV1.rows; exit 1; fi
+        if [ $(cat results.json | jq .viewContentsV1.totalRows) -ne 0 ]; then cat results.json | jq .viewContentsV1.rows; exit 0; fi
 
     - id: changeset
       name: Get Pull Request Changeset
