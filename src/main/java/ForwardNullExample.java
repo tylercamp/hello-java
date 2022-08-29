@@ -1,6 +1,6 @@
 public class ForwardNullExample {
     public static Object callA() {
-        return testA(new Object());
+        return testA(null);
     }
 
     public static Object callB() {
