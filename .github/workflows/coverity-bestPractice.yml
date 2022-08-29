@@ -1,4 +1,4 @@
-name: Coverity
+name: Coverity Template
 on:
   push:
     branches: [ master, stage, 'releases/**' ]
