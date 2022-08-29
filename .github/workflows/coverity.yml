@@ -61,8 +61,8 @@ jobs:
           --exit1-if-defects true ${{ steps.changeset.outputs.added_modified }}
 
     - name: Update Pull Request
-        uses: synopsys-sig/coverity-report-output-v7-json@v0.0.1
-        with:
+      uses: synopsys-sig/coverity-report-output-v7-json@v0.1.1
+      with:
         # The following parameters are REQUIRED
           json-file-path: ./coverity-results.json
           github-token: ${{ secrets.GITHUB_TOKEN }}
