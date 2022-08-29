@@ -21,15 +21,15 @@ jobs:
       with:
         java-version: 11
         distribution: 'adopt'        
-      - name: Run Baseline Black Duck Scan (manual, workflow dispatch)
-        if: ${{github.event_name == 'workflow_dispatch'}}
-        uses: synopsys-sig-community/blackduck-direct-scan-action@v1
-        with:
-          bd_url: ${{ secrets.BLACKDUCK_URL }}
-          bd_token: ${{ secrets.BLACKDUCK_API_TOKEN }}
-          mode: intelligent
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
+    - name: Run Baseline Black Duck Scan (manual, workflow dispatch)
+      if: ${{github.event_name == 'workflow_dispatch'}}
+      uses: synopsys-sig-community/blackduck-direct-scan-action@v1
+      with:
+         bd_url: ${{ secrets.BLACKDUCK_URL }}
+         bd_token: ${{ secrets.BLACKDUCK_API_TOKEN }}
+         mode: intelligent
+      env:
+         GITHUB_TOKEN: ${{ github.token }}
        
     - name: Black Duck security scan SARIF
       uses: synopsys-sig-community/blackduck-direct-scan-action@v1
