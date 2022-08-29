@@ -2,7 +2,7 @@ public class ForwardNullExample {
     public static Object callA() {
         Object Aprime;
         // This causes a FORWARD_NULL defect report
-        return testA(null);
+        return testA(Aprime);
     }
 
     public static Object callB() {
