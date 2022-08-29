@@ -23,9 +23,6 @@ jobs:
         distribution: 'adopt'        
  
     - name: Black Duck Scan
-      uses: blackducksoftware/github-action@v2
-      with:
-        args: --detect.project.name=$PROJECT --detect.project.version.name=$BRANCH --detect.tools=SIGNATURE_SCAN,DETECTOR
       uses: synopsys-sig/detect-action@v0.3.0
       with:
 #          scan-mode: INTELLIGENT
