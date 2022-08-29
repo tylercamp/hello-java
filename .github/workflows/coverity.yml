@@ -36,6 +36,7 @@ jobs:
         cov-analyze --dir idir --ticker-mode none --strip-path $GITHUB_WORKSPACE $CHECKERS
         cov-commit-defects --dir idir --ticker-mode none --url $COV_URL --stream $COVERITY_PROJECT-${GITHUB_REF##*/} --scm git \
           --description $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID --target $RUNNER_OS --version $GITHUB_SHA
+        cov-format-errors --dir idir --json-output-v7 coverity-results.json  
 
     - name: Coverity Quality Gate
       if: ${{ github.event_name != 'pull_request' }}
@@ -55,4 +56,18 @@ jobs:
         set -x
         cov-run-desktop --dir idir --url $COV_URL --stream $COVERITY_PROJECT-$GITHUB_BASE_REF --build $BLDCMD
         cov-run-desktop --dir idir --url $COV_URL --stream $COVERITY_PROJECT-$GITHUB_BASE_REF --present-in-reference false \
-          --ignore-uncapturable-inputs true --exit1-if-defects true ${{ steps.changeset.outputs.added_modified }}
+          --json-output-v7 coverity-results.json --ignore-uncapturable-inputs true --exit1-if-defects true ${{ steps.changeset.outputs.added_modified }}
+
+      - name: Coverity Pull Request Feedback
+        uses: synopsys-sig/coverity-report-output-v7-json@v0.0.1
+        with:
+          # The following parameters are REQUIRED
+          json-file-path: ./coverity-results.json
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          # If the following optional parameters are specified, the results from the JSON output will be
+          # compared to the baseline issues in the specified project, and only NEW issues will be reported
+          # in the pull request.
+          coverity-url: ${{ secrets.COV_URL }}
+          coverity-project-name: ${{ github.event.repository.name }}
+          coverity-username: ${{ secrets.COV_USER }}
+          coverity-password: ${{ secrets.COVERITY_PASSPHRASE }}
