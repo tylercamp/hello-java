@@ -57,8 +57,8 @@ jobs:
         cov-run-desktop --dir idir --url $COV_URL --stream $COVERITY_PROJECT-$GITHUB_BASE_REF --build $BLDCMD
         cov-run-desktop --dir idir --url $COV_URL --stream $COVERITY_PROJECT-$GITHUB_BASE_REF --present-in-reference false \
           --ignore-uncapturable-inputs true \
-          --json-output-v7 coverity-results.json
-          #--exit1-if-defects true ${{ steps.changeset.outputs.added_modified }}
+          --json-output-v7 coverity-results.json \
+          --exit1-if-defects false ${{ steps.changeset.outputs.added_modified }}
 
     - name: Update Pull Request
       uses: synopsys-sig/coverity-report-output-v7-json@v0.1.1
