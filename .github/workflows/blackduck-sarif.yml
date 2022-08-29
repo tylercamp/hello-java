@@ -1,0 +1,54 @@
+name: Black Duck
+
+on:
+  push:
+    branches: [ master ]
+  workflow_dispatch:
+
+jobs:
+  blackduck:
+    runs-on: ubuntu-latest
+
+    env:
+      BLACKDUCK_URL: ${{ secrets.BLACKDUCK_URL }}
+      BLACKDUCK_API_TOKEN: ${{ secrets.BLACKDUCK_API_TOKEN }}
+      PROJECT: raf-hello-java
+      BRANCH: ${GITHUB_REF##*/}
+
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-java@v1
+      with:
+        java-version: 11
+        distribution: 'adopt'        
+      - name: Run Baseline Black Duck Scan (manual, workflow dispatch)
+        if: ${{github.event_name == 'workflow_dispatch'}}
+        uses: synopsys-sig-community/blackduck-direct-scan-action@v1
+        with:
+          bd_url: ${{ secrets.BLACKDUCK_URL }}
+          bd_token: ${{ secrets.BLACKDUCK_API_TOKEN }}
+          mode: intelligent
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+       
+    - name: Black Duck security scan SARIF
+      uses: synopsys-sig-community/blackduck-direct-scan-action@v1
+      with:
+        bd_url: ${{ secrets.BLACKDUCK_URL }}
+        bd_token: ${{ secrets.BLACKDUCK_API_TOKEN }}
+        upgrade_major: true
+        sarif: blackduck-sarif.json  
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
+        
+    - name: "Check file existence"
+      id: check_files
+      uses: andstor/file-existence-action@v1
+      with:
+        files: "blackduck-sarif.json"
+    - name: Upload SARIF file
+      if: steps.check_files.outputs.files_exists == 'true'
+      uses: github/codeql-action/upload-sarif@v1
+      with:
+        sarif_file: blackduck-sarif.json        
+       
