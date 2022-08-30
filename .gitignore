@@ -40,3 +40,4 @@ idir/emit/FELICE-5540/config/d47301ac88cee2f34f9b5e8b96ed0707/template-jsp-confi
 idir/output/version
 idir/tmp/emit-db-cache
 idir/tmp/emit-db-cache.lock
+idir/emit/version
