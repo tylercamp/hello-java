@@ -1,4 +1,5 @@
 public class ForwardNullExample {
+    //Need callA() method
 
     public static Object callB() {
         // No defect report
