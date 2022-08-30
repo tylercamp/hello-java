@@ -42,3 +42,4 @@ idir/tmp/emit-db-cache
 idir/tmp/emit-db-cache.lock
 idir/emit/version
 _coverity.yaml.bak
+/hello-java.iml
