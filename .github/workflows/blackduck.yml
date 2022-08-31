@@ -3,7 +3,7 @@ name: Black Duck Intelligent Scan
 on:
   push:
     branches: [ master ]
-  pull:
+  pull_request:
     branches: [ master ]
   schedule:
     - cron: '5 23 * * *'
