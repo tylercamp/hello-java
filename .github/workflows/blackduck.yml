@@ -1,8 +1,13 @@
-name: Black Duck
+name: Black Duck Intelligent Scan
 
 on:
   push:
     branches: [ master ]
+  pull:
+    branches: [ master ]
+  schedule:
+    - cron: '5 23 * * *'
+    
   workflow_dispatch:
 
 jobs:
@@ -17,9 +22,10 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - uses: actions/setup-java@v1
+    - uses: actions/setup-java@v2
       with:
-        java-version: 11       
+        java-version: '11'
+        distribution: 'adopt'
  
     - name: Black Duck Scan
       uses: synopsys-sig/detect-action@v0.3.0
@@ -30,6 +36,6 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           blackduck-url: ${{ secrets.BLACKDUCK_URL }}
           blackduck-api-token: ${{ secrets.BLACKDUCK_API_TOKEN }}
-          sarif: blackduck-sarif.json  
+#          sarif: blackduck-sarif.json  
       env:
         GITHUB_TOKEN: ${{ github.token }}
