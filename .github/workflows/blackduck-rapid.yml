@@ -30,7 +30,6 @@ jobs:
     - name: Black Duck Scan
       uses: synopsys-sig/detect-action@v0.3.0
       with:
-#          scan-mode: INTELLIGENT
           scan-mode: RAPID
           detect-version: 7.14.0          
           github-token: ${{ secrets.GITHUB_TOKEN }}
