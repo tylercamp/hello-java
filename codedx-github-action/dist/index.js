@@ -79,12 +79,15 @@ async function prepareInputsZip(inputsGlob, targetFile) {
   const workingDir = process.cwd()
   for await (const file of inputFilesGlob.globGenerator()) {
     const relPath = makeRelative(workingDir, file)
-    core.info(`Adding ${file} (${relPath})`)
+    // core.info(`Adding ${file} (${relPath})`)
     archive.file(relPath)
     numWritten += 1
   }
   core.info("Finished adding files, waiting for ZIP creation to complete")
-  await archive.finalize()
+  const p = archive.finalize().catch(e => core.error(e))
+  core.info("beginning await")
+  await p
+  core.info("Finished finalize")
   return numWritten
 }
 
