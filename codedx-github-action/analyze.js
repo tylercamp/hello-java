@@ -51,14 +51,12 @@ async function prepareInputsZip(inputsGlob, targetFile) {
     throw new Error("No globs specified for source/binary input files")
   }
 
-  core.info("Test log")
-
   const inputFilesGlob = await buildGlobObject(separatedInputGlobs)
   const output = fs.createWriteStream(targetFile);
   const archive = archiver('zip');
   archive.on('end', () => core.info("Finished writing ZIP"))
   archive.on('warning', (err) => core.warning("Warning when writing ZIP: ", err))
-  archive.on('error', function() { core.error("Error when writing ZIP", arguments.length, arguments) })
+  archive.on('error', function() { core.error(`Error when writing ZIP (${arguments.length}, ${arguments})`) })
 
   archive.pipe(output);
 
