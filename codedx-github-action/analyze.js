@@ -68,6 +68,7 @@ async function prepareInputsZip(inputsGlob, targetFile) {
     archive.file(relPath)
     numWritten += 1
   }
+  core.info("Finished adding files, waiting for ZIP creation to complete")
   await archive.finalize()
   return numWritten
 }
