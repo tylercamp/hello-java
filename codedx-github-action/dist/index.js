@@ -58,6 +58,8 @@ async function prepareInputsZip(inputsGlob, targetFile) {
     throw new Error("No globs specified for source/binary input files")
   }
 
+  core.info("Test log")
+
   const inputFilesGlob = await buildGlobObject(separatedInputGlobs)
   const output = fs.createWriteStream(targetFile);
   const archive = archiver('zip');
