@@ -63,7 +63,7 @@ async function prepareInputsZip(inputsGlob, targetFile) {
   const archive = archiver('zip');
   function trim(o) {
     const str = o.toString()
-    str.substr(0, 100)
+    return str.substr(0, 100)
   }
   archive.on('end', () => core.info("Finished writing ZIP"))
   archive.on('warning', (err) => core.warning("Warning when writing ZIP: " + err))
