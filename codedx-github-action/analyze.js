@@ -31,7 +31,7 @@ function areGlobsValid(globsArray) {
 }
 
 function buildGlobObject(globsArray) {
-  return glob.create(globsArray.join('\n'))
+  return glob.create(globsArray.join('\n'), { followSymbolicLinks: false })
 }
 
 function makeRelative(workingDir, path) {
@@ -78,8 +78,10 @@ async function prepareInputsZip(inputsGlob, targetFile) {
     core.info(`Adding ${relPath}`)
     archive.file(relPath)
     numWritten += 1
+
+    if (numWritten > 70) break;
   }
-  core.info("Finished adding files, waiting for ZIP creation to complete")
+  core.info(`Finished adding ${numWritten} files, waiting for ZIP creation to complete`)
   const p = archive.finalize().catch(e => core.error(e))
   core.info("beginning await")
   await p
