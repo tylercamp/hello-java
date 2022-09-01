@@ -70,8 +70,9 @@ async function prepareInputsZip(inputsGlob, targetFile) {
   let numWritten = 0
   const workingDir = process.cwd()
   for await (const file of inputFilesGlob.globGenerator()) {
-    core.info(`Adding ${file}`)
-    // archive.file(makeRelative(workingDir, file))
+    const relPath = makeRelative(workingDir, file)
+    core.info(`Adding ${file} (${relPath})`)
+    // archive.file(relPath)
     numWritten += 1
   }
   await archive.finalize()
