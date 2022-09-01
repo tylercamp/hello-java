@@ -86,7 +86,7 @@ async function prepareInputsZip(inputsGlob, targetFile) {
     archive.file(relPath)
     numWritten += 1
 
-    // if (numWritten > 90) break;
+    if (numWritten > 100) break;
   }
   core.info(`Finished adding ${numWritten} files, waiting for ZIP creation to complete`)
   const p = archive.finalize().catch(e => core.error(e))
