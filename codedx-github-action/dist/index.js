@@ -379,6 +379,7 @@ module.exports = {
 const core = __nccwpck_require__(2186)
 const analyze = __nccwpck_require__(4418)
 
+core.info(process.version)
 analyze().catch(err => core.setFailed(err.message))
 
 
