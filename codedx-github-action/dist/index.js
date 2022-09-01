@@ -82,11 +82,13 @@ async function prepareInputsZip(inputsGlob, targetFile) {
     if (fs.statSync(file).isDirectory()) continue;
 
     const relPath = makeRelative(workingDir, file)
+    if (file == targetFile || file == relPath) continue;
+    
     core.info(`Adding ${relPath}`)
     archive.file(relPath)
     numWritten += 1
 
-    if (numWritten > 120) break;
+    // if (numWritten > 120) break;
   }
   core.info(`Finished adding ${numWritten} files, waiting for ZIP creation to complete`)
   const p = archive.finalize().catch(e => core.error(e))
