@@ -31,7 +31,7 @@ function areGlobsValid(globsArray) {
 }
 
 function buildGlobObject(globsArray) {
-  return glob.create(globsArray.join('\n'), { followSymbolicLinks: false })
+  return glob.create(globsArray.join('\n'), { matchDirectories: false })
 }
 
 function makeRelative(workingDir, path) {
@@ -46,7 +46,7 @@ function makeRelative(workingDir, path) {
 
 async function prepareInputsZip(inputsGlob, targetFile) {
   const separatedInputGlobs = commaSeparated(inputsGlob);
-  core.info("Got input file globs: " + separatedInputGlobs)
+  core.debug("Got input file globs: " + separatedInputGlobs)
   if (!areGlobsValid(separatedInputGlobs)) {
     throw new Error("No globs specified for source/binary input files")
   }
@@ -54,43 +54,22 @@ async function prepareInputsZip(inputsGlob, targetFile) {
   const inputFilesGlob = await buildGlobObject(separatedInputGlobs)
   const output = fs.createWriteStream(targetFile);
   const archive = archiver('zip');
-  function trim(o) {
-    const str = JSON.stringify(o)
-    return str.substr(0, 100)
-  }
   archive.on('end', () => core.info("Finished writing ZIP"))
-  archive.on('warning', (err) => core.warning("Warning when writing ZIP: " + err))
-  archive.on('error', (err) => core.error("Error when writing ZIP: " + err))
-
-  // [
-  //   'data', 'progress', 'entry', 'close', 'drain', 'finish', 'pipe', 'unpipe'
-  // ].forEach(event => archive.on(event, (e) => core.info(`${event} event: ${trim(e)}`)))
+  archive.on('warning', (err) => core.warning("Warning when writing ZIP: ", err))
+  archive.on('error', (err) => core.error("Error when writing ZIP: ", err))
 
   archive.pipe(output);
 
   let numWritten = 0
   const workingDir = process.cwd()
-  for await (let file of inputFilesGlob.globGenerator()) {
-    if (!file.length || ['/', '.'].indexOf(file[0]) < 0) file = './' + file
-    if (fs.statSync(file).isDirectory()) continue;
-
+  for await (const file of inputFilesGlob.globGenerator()) {
     const relPath = makeRelative(workingDir, file)
-    if (file.trim() == targetFile.trim() || relPath.trim() == targetFile.trim()) continue;
-
-    // core.info(`'${file}' == ${targetFile}`)
+    if (file == targetFile || relPath == targetFile) continue;
     
-    core.info(`Adding ${relPath}`)
     archive.file(relPath)
     numWritten += 1
-
-    // if (numWritten > 120) break;
   }
-  core.info(typeof targetFile)
-  core.info(`Finished adding ${numWritten} files, waiting for ZIP creation of ${targetFile} to complete`)
-  const p = archive.finalize().catch(e => core.error(e))
-  core.info("beginning await")
-  await p
-  core.info("Finished finalize")
+  await archive.finalize()
   return numWritten
 }
 

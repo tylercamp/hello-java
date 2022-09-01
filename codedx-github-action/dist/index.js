@@ -38,7 +38,7 @@ function areGlobsValid(globsArray) {
 }
 
 function buildGlobObject(globsArray) {
-  return glob.create(globsArray.join('\n'), { followSymbolicLinks: false })
+  return glob.create(globsArray.join('\n'), { matchDirectories: false })
 }
 
 function makeRelative(workingDir, path) {
@@ -53,7 +53,7 @@ function makeRelative(workingDir, path) {
 
 async function prepareInputsZip(inputsGlob, targetFile) {
   const separatedInputGlobs = commaSeparated(inputsGlob);
-  core.info("Got input file globs: " + separatedInputGlobs)
+  core.debug("Got input file globs: " + separatedInputGlobs)
   if (!areGlobsValid(separatedInputGlobs)) {
     throw new Error("No globs specified for source/binary input files")
   }
@@ -61,43 +61,22 @@ async function prepareInputsZip(inputsGlob, targetFile) {
   const inputFilesGlob = await buildGlobObject(separatedInputGlobs)
   const output = fs.createWriteStream(targetFile);
   const archive = archiver('zip');
-  function trim(o) {
-    const str = JSON.stringify(o)
-    return str.substr(0, 100)
-  }
   archive.on('end', () => core.info("Finished writing ZIP"))
-  archive.on('warning', (err) => core.warning("Warning when writing ZIP: " + err))
-  archive.on('error', (err) => core.error("Error when writing ZIP: " + err))
-
-  // [
-  //   'data', 'progress', 'entry', 'close', 'drain', 'finish', 'pipe', 'unpipe'
-  // ].forEach(event => archive.on(event, (e) => core.info(`${event} event: ${trim(e)}`)))
+  archive.on('warning', (err) => core.warning("Warning when writing ZIP: ", err))
+  archive.on('error', (err) => core.error("Error when writing ZIP: ", err))
 
   archive.pipe(output);
 
   let numWritten = 0
   const workingDir = process.cwd()
-  for await (let file of inputFilesGlob.globGenerator()) {
-    if (!file.length || ['/', '.'].indexOf(file[0]) < 0) file = './' + file
-    if (fs.statSync(file).isDirectory()) continue;
-
+  for await (const file of inputFilesGlob.globGenerator()) {
     const relPath = makeRelative(workingDir, file)
-    if (file.trim() == targetFile.trim() || relPath.trim() == targetFile.trim()) continue;
-
-    // core.info(`'${file}' == ${targetFile}`)
+    if (file == targetFile || relPath == targetFile) continue;
     
-    core.info(`Adding ${relPath}`)
     archive.file(relPath)
     numWritten += 1
-
-    // if (numWritten > 120) break;
   }
-  core.info(typeof targetFile)
-  core.info(`Finished adding ${numWritten} files, waiting for ZIP creation of ${targetFile} to complete`)
-  const p = archive.finalize().catch(e => core.error(e))
-  core.info("beginning await")
-  await p
-  core.info("Finished finalize")
+  await archive.finalize()
   return numWritten
 }
 
@@ -389,7 +368,6 @@ module.exports = {
 const core = __nccwpck_require__(2186)
 const analyze = __nccwpck_require__(4418)
 
-core.info(process.version)
 analyze().catch(err => core.setFailed(err.message))
 
 
@@ -824,14 +802,14 @@ exports.create = create;
  * @param patterns  Patterns separated by newlines
  * @param options   Glob options
  */
-function hashFiles(patterns, options, verbose = false) {
+function hashFiles(patterns, options) {
     return __awaiter(this, void 0, void 0, function* () {
         let followSymbolicLinks = true;
         if (options && typeof options.followSymbolicLinks === 'boolean') {
             followSymbolicLinks = options.followSymbolicLinks;
         }
         const globber = yield create(patterns, { followSymbolicLinks });
-        return internal_hash_files_1.hashFiles(globber, verbose);
+        return internal_hash_files_1.hashFiles(globber);
     });
 }
 exports.hashFiles = hashFiles;
@@ -1191,11 +1169,10 @@ const fs = __importStar(__nccwpck_require__(5747));
 const stream = __importStar(__nccwpck_require__(2413));
 const util = __importStar(__nccwpck_require__(1669));
 const path = __importStar(__nccwpck_require__(5622));
-function hashFiles(globber, verbose = false) {
+function hashFiles(globber) {
     var e_1, _a;
     var _b;
     return __awaiter(this, void 0, void 0, function* () {
-        const writeDelegate = verbose ? core.info : core.debug;
         let hasMatch = false;
         const githubWorkspace = (_b = process.env['GITHUB_WORKSPACE']) !== null && _b !== void 0 ? _b : process.cwd();
         const result = crypto.createHash('sha256');
@@ -1203,13 +1180,13 @@ function hashFiles(globber, verbose = false) {
         try {
             for (var _c = __asyncValues(globber.globGenerator()), _d; _d = yield _c.next(), !_d.done;) {
                 const file = _d.value;
-                writeDelegate(file);
+                core.debug(file);
                 if (!file.startsWith(`${githubWorkspace}${path.sep}`)) {
-                    writeDelegate(`Ignore '${file}' since it is not under GITHUB_WORKSPACE.`);
+                    core.debug(`Ignore '${file}' since it is not under GITHUB_WORKSPACE.`);
                     continue;
                 }
                 if (fs.statSync(file).isDirectory()) {
-                    writeDelegate(`Skip directory '${file}'.`);
+                    core.debug(`Skip directory '${file}'.`);
                     continue;
                 }
                 const hash = crypto.createHash('sha256');
@@ -1231,11 +1208,11 @@ function hashFiles(globber, verbose = false) {
         }
         result.end();
         if (hasMatch) {
-            writeDelegate(`Found ${count} files to hash.`);
+            core.debug(`Found ${count} files to hash.`);
             return result.digest('hex');
         }
         else {
-            writeDelegate(`No matches found for glob`);
+            core.debug(`No matches found for glob`);
             return '';
         }
     });
