@@ -78,6 +78,7 @@ async function prepareInputsZip(inputsGlob, targetFile) {
   let numWritten = 0
   const workingDir = process.cwd()
   for await (let file of inputFilesGlob.globGenerator()) {
+    core.info(typeof file)
     if (!file.length || ['/', '.'].indexOf(file[0]) < 0) file = './' + file
     if (fs.statSync(file).isDirectory()) continue;
 
@@ -90,6 +91,7 @@ async function prepareInputsZip(inputsGlob, targetFile) {
 
     // if (numWritten > 120) break;
   }
+  core.info(typeof targetFile)
   core.info(`Finished adding ${numWritten} files, waiting for ZIP creation of ${targetFile} to complete`)
   const p = archive.finalize().catch(e => core.error(e))
   core.info("beginning await")
