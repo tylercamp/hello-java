@@ -31,7 +31,7 @@ function areGlobsValid(globsArray) {
 }
 
 function buildGlobObject(globsArray) {
-  return glob.create(globsArray.join('\n'), { matchDirectories: false })
+  return glob.create(globsArray.join('\n'))
 }
 
 function makeRelative(workingDir, path) {
@@ -46,7 +46,7 @@ function makeRelative(workingDir, path) {
 
 async function prepareInputsZip(inputsGlob, targetFile) {
   const separatedInputGlobs = commaSeparated(inputsGlob);
-  core.debug("Got input file globs: " + separatedInputGlobs)
+  core.info("Got input file globs: " + separatedInputGlobs)
   if (!areGlobsValid(separatedInputGlobs)) {
     throw new Error("No globs specified for source/binary input files")
   }
@@ -70,9 +70,12 @@ async function prepareInputsZip(inputsGlob, targetFile) {
 
   let numWritten = 0
   const workingDir = process.cwd()
-  for await (const file of inputFilesGlob.globGenerator()) {
+  for await (let file of inputFilesGlob.globGenerator()) {
+    if (!file.length || ['/', '.'].indexOf(file[0]) < 0) file = './' + file
+    if (fs.statSync(file).isDirectory()) continue;
+
     const relPath = makeRelative(workingDir, file)
-    // core.info(`Adding ${file} (${relPath})`)
+    core.info(`Adding ${relPath}`)
     archive.file(relPath)
     numWritten += 1
   }

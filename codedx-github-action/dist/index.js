@@ -38,7 +38,7 @@ function areGlobsValid(globsArray) {
 }
 
 function buildGlobObject(globsArray) {
-  return glob.create(globsArray.join('\n'), { matchDirectories: false })
+  return glob.create(globsArray.join('\n'))
 }
 
 function makeRelative(workingDir, path) {
@@ -53,7 +53,7 @@ function makeRelative(workingDir, path) {
 
 async function prepareInputsZip(inputsGlob, targetFile) {
   const separatedInputGlobs = commaSeparated(inputsGlob);
-  core.debug("Got input file globs: " + separatedInputGlobs)
+  core.info("Got input file globs: " + separatedInputGlobs)
   if (!areGlobsValid(separatedInputGlobs)) {
     throw new Error("No globs specified for source/binary input files")
   }
@@ -77,9 +77,12 @@ async function prepareInputsZip(inputsGlob, targetFile) {
 
   let numWritten = 0
   const workingDir = process.cwd()
-  for await (const file of inputFilesGlob.globGenerator()) {
+  for await (let file of inputFilesGlob.globGenerator()) {
+    if (!file.length || ['/', '.'].indexOf(file[0]) < 0) file = './' + file
+    if (fs.statSync(file).isDirectory()) continue;
+
     const relPath = makeRelative(workingDir, file)
-    // core.info(`Adding ${file} (${relPath})`)
+    core.info(`Adding ${relPath}`)
     archive.file(relPath)
     numWritten += 1
   }
@@ -814,14 +817,14 @@ exports.create = create;
  * @param patterns  Patterns separated by newlines
  * @param options   Glob options
  */
-function hashFiles(patterns, options) {
+function hashFiles(patterns, options, verbose = false) {
     return __awaiter(this, void 0, void 0, function* () {
         let followSymbolicLinks = true;
         if (options && typeof options.followSymbolicLinks === 'boolean') {
             followSymbolicLinks = options.followSymbolicLinks;
         }
         const globber = yield create(patterns, { followSymbolicLinks });
-        return internal_hash_files_1.hashFiles(globber);
+        return internal_hash_files_1.hashFiles(globber, verbose);
     });
 }
 exports.hashFiles = hashFiles;
@@ -1181,10 +1184,11 @@ const fs = __importStar(__nccwpck_require__(5747));
 const stream = __importStar(__nccwpck_require__(2413));
 const util = __importStar(__nccwpck_require__(1669));
 const path = __importStar(__nccwpck_require__(5622));
-function hashFiles(globber) {
+function hashFiles(globber, verbose = false) {
     var e_1, _a;
     var _b;
     return __awaiter(this, void 0, void 0, function* () {
+        const writeDelegate = verbose ? core.info : core.debug;
         let hasMatch = false;
         const githubWorkspace = (_b = process.env['GITHUB_WORKSPACE']) !== null && _b !== void 0 ? _b : process.cwd();
         const result = crypto.createHash('sha256');
@@ -1192,13 +1196,13 @@ function hashFiles(globber) {
         try {
             for (var _c = __asyncValues(globber.globGenerator()), _d; _d = yield _c.next(), !_d.done;) {
                 const file = _d.value;
-                core.debug(file);
+                writeDelegate(file);
                 if (!file.startsWith(`${githubWorkspace}${path.sep}`)) {
-                    core.debug(`Ignore '${file}' since it is not under GITHUB_WORKSPACE.`);
+                    writeDelegate(`Ignore '${file}' since it is not under GITHUB_WORKSPACE.`);
                     continue;
                 }
                 if (fs.statSync(file).isDirectory()) {
-                    core.debug(`Skip directory '${file}'.`);
+                    writeDelegate(`Skip directory '${file}'.`);
                     continue;
                 }
                 const hash = crypto.createHash('sha256');
@@ -1220,11 +1224,11 @@ function hashFiles(globber) {
         }
         result.end();
         if (hasMatch) {
-            core.debug(`Found ${count} files to hash.`);
+            writeDelegate(`Found ${count} files to hash.`);
             return result.digest('hex');
         }
         else {
-            core.debug(`No matches found for glob`);
+            writeDelegate(`No matches found for glob`);
             return '';
         }
     });
