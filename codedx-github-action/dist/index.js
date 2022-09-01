@@ -82,7 +82,9 @@ async function prepareInputsZip(inputsGlob, targetFile) {
     if (fs.statSync(file).isDirectory()) continue;
 
     const relPath = makeRelative(workingDir, file)
-    if (file.trim() == targetFile.trim() || file.trim() == relPath.trim()) continue;
+    if (file.trim() == targetFile.trim() || relPath.trim() == targetFile.trim()) continue;
+
+    // core.info(`'${file}' == ${targetFile}`)
     
     core.info(`Adding ${relPath}`)
     archive.file(relPath)
