@@ -38,7 +38,7 @@ function areGlobsValid(globsArray) {
 }
 
 function buildGlobObject(globsArray) {
-  return glob.create(globsArray.join('\n'), { matchDirectories: false })
+  return glob.create(globsArray.join('\n'))
 }
 
 function makeRelative(workingDir, path) {
@@ -63,18 +63,15 @@ async function prepareInputsZip(inputsGlob, targetFile) {
   const archive = archiver('zip');
   archive.on('end', () => core.info("Finished writing ZIP"))
   archive.on('warning', (err) => core.warning("Warning when writing ZIP: ", err))
-  archive.on('error', (err) => core.error(`Error when writing ZIP: ${err}`))
+  archive.on('error', (err) => core.error("Error when writing ZIP: ", err))
 
   archive.pipe(output);
 
   let numWritten = 0
   const workingDir = process.cwd()
   for await (const file of inputFilesGlob.globGenerator()) {
-    const relPath = makeRelative(workingDir, file)
-    core.info(`Adding ${file} (rel: ${relPath})`)
-    archive.file(relPath)
+    archive.file(makeRelative(workingDir, file))
     numWritten += 1
-    if (numWritten > 1000) break;
   }
   await archive.finalize()
   return numWritten
