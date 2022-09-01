@@ -61,12 +61,16 @@ async function prepareInputsZip(inputsGlob, targetFile) {
   const inputFilesGlob = await buildGlobObject(separatedInputGlobs)
   const output = fs.createWriteStream(targetFile);
   const archive = archiver('zip');
+  function trim(o) {
+    const str = o.toString()
+    str.substr(0, 100)
+  }
   archive.on('end', () => core.info("Finished writing ZIP"))
   archive.on('warning', (err) => core.warning("Warning when writing ZIP: " + err))
   archive.on('error', (err) => core.error("Error when writing ZIP: " + err))
-  archive.on('data', (e) => core.info('data event: ' + e))
-  archive.on('progress', (e) => core.info("progress event: " + e))
-  archive.on('entry', (e) => core.info('entry event: ' + e))
+  archive.on('data', (e) => core.info('data event: ' + trim(e)))
+  archive.on('progress', (e) => core.info("progress event: " + trim(e)))
+  archive.on('entry', (e) => core.info('entry event: ' + trim(e)))
 
   archive.pipe(output);
 
