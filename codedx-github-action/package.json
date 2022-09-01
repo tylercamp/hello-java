@@ -1,0 +1,49 @@
+{
+  "name": "codedx-upload",
+  "version": "1.0.0",
+  "description": "Analyze your source code and binaries with Code Dx",
+  "main": "index.js",
+  "scripts": {
+    "lint": "eslint .",
+    "prepare": "ncc build index.js -o dist --source-map --license licenses.txt",
+    "test": "jest",
+    "all": "npm run lint && npm run prepare && npm run test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/codedx/codedx-github-action.git"
+  },
+  "keywords": [
+    "codedx",
+    "sast",
+    "scan",
+    "scanner",
+    "scanning",
+    "security",
+    "analyze",
+    "analysis"
+  ],
+  "author": "Tyler Camp",
+  "license": "Apache 2.0",
+  "bugs": {
+    "url": "https://github.com/codedx/codedx-github-action/issues"
+  },
+  "homepage": "https://github.com/codedx/codedx-github-action",
+  "dependencies": {
+    "@actions/core": "^1.2.5",
+    "@actions/glob": "^0.2.0",
+    "archiver": "^5.3.0",
+    "axios": "^0.21.4",
+    "axios-logger": "^2.5.0",
+    "form-data": "^4.0.0",
+    "underscore": "^1.13.1"
+  },
+  "devDependencies": {
+    "@vercel/ncc": "^0.27.0",
+    "eslint": "^7.4.0",
+    "jest": "^26.6.3"
+  },
+  "jest": {
+    "testEnvironment": "node"
+  }
+}

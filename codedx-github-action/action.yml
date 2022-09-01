@@ -1,0 +1,35 @@
+name: 'Code Dx Analysis'
+description: 'Analyze your source code and binaries with Code Dx'
+inputs:
+  # main config options
+  server-url:
+    description: 'the URL for the Code Dx server (typically ends with `/codedx`)'
+    required: true
+  api-key:
+    description: 'an API key or Personal Access Token (PAT) to use when connecting to Code Dx'
+    required: true
+  project-id:
+    description: 'the ID of a project (an integer) created in Code Dx'
+    required: true
+  source-and-binaries-glob:
+    description: 'a file glob matching source and binary files (accepts multiple comma-separated globs)'
+    required: true
+  tool-outputs-glob:
+    description: 'a file glob matching output files (ie scan results) from an analysis tool (accepts multiple comma-separated globs)'  
+    required: false
+  
+  # additional settings
+  wait-for-completion:
+    description: 'whether to wait for the analysis to complete. if true, will fail the build if the analysis encountered an error.'
+    required: false
+    default: false
+  ca-cert:
+    description: 'a custom CA cert to use for HTTPS requests to Code Dx'
+    required: false
+  dry-run:
+    description: 'whether to submit an analysis (false/undefined), or only test the connection and credentials (true). an error in validation will fail the build.'
+    required: false
+    default: false
+runs:
+  using: 'node12'
+  main: 'dist/index.js'
