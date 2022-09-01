@@ -38,7 +38,7 @@ function areGlobsValid(globsArray) {
 }
 
 function buildGlobObject(globsArray) {
-  return glob.create(globsArray.join('\n'))
+  return glob.create(globsArray.join('\n'), { matchDirectories: false })
 }
 
 function makeRelative(workingDir, path) {
