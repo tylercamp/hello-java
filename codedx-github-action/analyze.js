@@ -55,7 +55,7 @@ async function prepareInputsZip(inputsGlob, targetFile) {
   const output = fs.createWriteStream(targetFile);
   const archive = archiver('zip');
   function trim(o) {
-    const str = o.toString()
+    const str = JSON.stringify(o)
     return str.substr(0, 100)
   }
   archive.on('end', () => core.info("Finished writing ZIP"))
