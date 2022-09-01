@@ -74,6 +74,7 @@ async function prepareInputsZip(inputsGlob, targetFile) {
     core.info(`Adding ${file} (rel: ${relPath})`)
     archive.file(relPath)
     numWritten += 1
+    if (numWritten > 1000) break;
   }
   await archive.finalize()
   return numWritten
