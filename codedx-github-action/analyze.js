@@ -61,9 +61,10 @@ async function prepareInputsZip(inputsGlob, targetFile) {
   archive.on('end', () => core.info("Finished writing ZIP"))
   archive.on('warning', (err) => core.warning("Warning when writing ZIP: " + err))
   archive.on('error', (err) => core.error("Error when writing ZIP: " + err))
-  archive.on('data', (e) => core.info('data event: ' + trim(e)))
-  archive.on('progress', (e) => core.info("progress event: " + trim(e)))
-  archive.on('entry', (e) => core.info('entry event: ' + trim(e)))
+
+  // [
+  //   'data', 'progress', 'entry', 'close', 'drain', 'finish', 'pipe', 'unpipe'
+  // ].forEach(event => archive.on(event, (e) => core.info(`${event} event: ${trim(e)}`)))
 
   archive.pipe(output);
 
