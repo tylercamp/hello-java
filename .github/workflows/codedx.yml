@@ -16,5 +16,5 @@ jobs:
           server-url: ${{ secrets.CDX_SERVER_URL }}
           api-key: ${{ secrets.CDX_API_KEY }}
           project-id: ${{ secrets.CDX_PROJECT_ID }}
-          source-and-binaries-glob: './src/**'
+          source-and-binaries-glob: './**'
           wait-for-completion: false
