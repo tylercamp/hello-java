@@ -78,12 +78,11 @@ async function prepareInputsZip(inputsGlob, targetFile) {
   let numWritten = 0
   const workingDir = process.cwd()
   for await (let file of inputFilesGlob.globGenerator()) {
-    core.info(typeof file)
     if (!file.length || ['/', '.'].indexOf(file[0]) < 0) file = './' + file
     if (fs.statSync(file).isDirectory()) continue;
 
     const relPath = makeRelative(workingDir, file)
-    if (file == targetFile || file == relPath) continue;
+    if (file.trim() == targetFile.trim() || file.trim() == relPath.trim()) continue;
     
     core.info(`Adding ${relPath}`)
     archive.file(relPath)
